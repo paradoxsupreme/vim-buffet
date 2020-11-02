@@ -63,7 +63,7 @@ function! buffet#update()
         let buffer = {}
         let buffer.head = split(buffer_head, s:path_separator)
         let buffer.not_new = len(buffer_tail)
-        let buffer.tail = buffer.not_new ? buffer_tail : g:buffet_new_buffer_name 
+        let buffer.tail = buffer.not_new ? buffer_tail : g:buffet_new_buffer_name
 
         " Update the buffers map
         let s:buffers[buffer_id] = buffer
@@ -315,7 +315,16 @@ function! s:Render()
 
         let separator =  g:buffet_has_separator[left.type][right.type]
         let separator_hi = s:GetTypeHighlight(left.type . right.type)
-        let render = render . separator_hi . separator
+
+        hi SeparatorTab   guibg=none guifg=#57637a
+
+        " Custom tab icon
+        if elem.type == "Tab" && has("nvim")
+            let render = "%#SeparatorTab#" . g:leftCircle . render . separator_hi . g:rightCircle . " "
+        " Standard buffer
+        elseif s:IsBufferElement(elem) && has("nvim")
+                let render = render . separator_hi . separator
+        endif
 
         if elem.type == "Tab" && has("nvim")
             let render = render . "%T"
